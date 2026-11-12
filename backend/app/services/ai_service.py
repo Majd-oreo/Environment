@@ -132,10 +132,26 @@ class AIService:
         return reply
 
 
+def _error_code(exc: Exception) -> str:
+    code = getattr(exc, "code", None)
+    if not code:
+        body = getattr(exc, "body", None)
+        if isinstance(body, dict):
+            code = body.get("code") or (body.get("error") or {}).get("code")
+    return str(code or "")
+
+
 def _map_openai_error(exc: Exception) -> AppError:
     """Translate provider errors into safe Arabic messages (no internals leaked)."""
     log.error("OpenAI error: %s: %s", type(exc).__name__, exc)
     if isinstance(exc, openai.RateLimitError):
+        # OpenAI returns 429 both for "too many requests" and for "no credit left".
+        if _error_code(exc) == "insufficient_quota":
+            return AppError(
+                "خدمة التحليل متوقفة مؤقتًا لأن رصيد حساب الذكاء الاصطناعي نفد. يرجى إبلاغ مسؤول المنصة.",
+                "provider_quota",
+                503,
+            )
         return AppError("الخدمة مشغولة حاليًا بسبب كثرة الطلبات. حاول بعد دقيقة.", "provider_rate_limited", 429)
     if isinstance(exc, openai.APITimeoutError):
         return AppError("استغرق التحليل وقتًا أطول من المعتاد. حاول مجددًا.", "timeout", 504)
