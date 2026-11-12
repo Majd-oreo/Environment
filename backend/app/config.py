@@ -27,6 +27,9 @@ def _int(name: str, default: int) -> int:
 @dataclass(frozen=True)
 class Settings:
     openai_api_key: str = field(default_factory=lambda: os.getenv("OPENAI_API_KEY", "").strip())
+    # Leave empty for OpenAI itself. For the free GitHub Models service use
+    # https://models.github.ai/inference with a GitHub token as OPENAI_API_KEY.
+    openai_base_url: str = field(default_factory=lambda: os.getenv("OPENAI_BASE_URL", "").strip())
     openai_model: str = field(default_factory=lambda: os.getenv("OPENAI_MODEL", "gpt-4o").strip())
     openai_chat_model: str = field(
         default_factory=lambda: os.getenv("OPENAI_CHAT_MODEL", "").strip() or os.getenv("OPENAI_MODEL", "gpt-4o").strip()

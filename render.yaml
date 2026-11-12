@@ -13,9 +13,14 @@ services:
       - key: PYTHON_VERSION
         value: 3.12.7
       - key: OPENAI_API_KEY
-        sync: false        # you enter the secret in the Render dashboard; never in git
+        sync: false        # GitHub token (Models: Read) or OpenAI key — entered in the dashboard, never in git
+      # Free option: GitHub Models. For paid OpenAI, delete OPENAI_BASE_URL and use gpt-4o.
+      - key: OPENAI_BASE_URL
+        value: https://models.github.ai/inference
       - key: OPENAI_MODEL
-        value: gpt-4o
+        value: openai/gpt-4o
+      - key: OPENAI_CHAT_MODEL
+        value: openai/gpt-4o-mini
       - key: DEMO_MODE
         value: "false"
       - key: MAX_UPLOAD_MB

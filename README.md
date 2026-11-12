@@ -70,6 +70,19 @@ Be'ati is an Arabic-first (RTL) web app. A user uploads or takes a photo of an o
 └── Procfile                     # For Railway / Heroku-style hosts
 ```
 
+## Free AI option: GitHub Models
+
+You can run Be'ati for free using GitHub Models, which serves GPT-4o through an OpenAI-compatible endpoint with daily usage limits.
+
+1. Create a fine-grained token at <https://github.com/settings/personal-access-tokens/new>. Under **Permissions → Account permissions**, set **Models** to **Read-only**. No repository access is needed.
+2. Set these environment variables (locally in `.env`, or in Render → your service → **Environment**):
+   - `OPENAI_API_KEY` = the token
+   - `OPENAI_BASE_URL` = `https://models.github.ai/inference`
+   - `OPENAI_MODEL` = `openai/gpt-4o`
+   - `OPENAI_CHAT_MODEL` = `openai/gpt-4o-mini`
+
+When the daily limit is reached, the app shows a clear Arabic message asking the user to try again later. For heavier use, switch to a paid OpenAI key and clear `OPENAI_BASE_URL`.
+
 ## Run locally
 
 Requirements: **Python 3.10+** and an **OpenAI API key** from <https://platform.openai.com/api-keys>.
@@ -165,8 +178,9 @@ To serve `frontend/` from a CDN (for example Netlify):
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `OPENAI_API_KEY` | — | **Required** for real analysis |
-| `OPENAI_MODEL` | `gpt-4o` | Vision model; must support `json_schema` structured outputs |
+| `OPENAI_API_KEY` | — | **Required**: a GitHub token (free option) or an OpenAI key |
+| `OPENAI_BASE_URL` | empty (OpenAI) | `https://models.github.ai/inference` for free GitHub Models |
+| `OPENAI_MODEL` | `gpt-4o` | Vision model, e.g. `openai/gpt-4o` on GitHub Models |
 | `OPENAI_CHAT_MODEL` | same as `OPENAI_MODEL` | Model for the follow-up chat |
 | `DEMO_MODE` | `false` | Sample results when no key is set |
 | `MAX_UPLOAD_MB` | `8` | Upload size limit |
